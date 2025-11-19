@@ -79,7 +79,7 @@ class SignalInjector:
         # Get or create waveform generator for interpolation
         if waveform_generator is None:
             # Create a temporary one - not ideal but works
-            from claude_gb_toolkit import WaveformGenerator
+            from .waveforms import WaveformGenerator
             # We need n_samples, estimate from waveform shape
             n_samples = waveforms_A.shape[1]
             waveform_generator = WaveformGenerator(t_obs=self.t_obs, n_samples=n_samples)

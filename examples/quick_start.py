@@ -10,7 +10,7 @@ This script shows the absolute minimum code needed to:
 import jax
 import jax.numpy as jnp
 import numpy as np
-from claude_gb_toolkit import NoiseGenerator, WaveformGenerator, SignalInjector
+from gb_spike_slab import NoiseGenerator, WaveformGenerator, SignalInjector
 
 # Enable 64-bit precision
 jax.config.update("jax_enable_x64", True)
@@ -59,7 +59,7 @@ print(f"   Created injected data with shape: {data_A.shape}")
 
 # Step 5: Compute SNRs
 print("\n5. Computing SNRs...")
-from claude_gb_toolkit.utils import compute_snr
+from gb_spike_slab.utils import compute_snr
 psd_A, psd_E, psd_T = noise_gen.get_psds()
 
 # Get individual waveforms on full grid

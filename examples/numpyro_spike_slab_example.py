@@ -12,8 +12,8 @@ This example:
 import numpy as np
 import jax.numpy as jnp
 import jax
-from claude_gb_toolkit import NoiseGenerator, WaveformGenerator, SignalInjector
-from claude_gb_toolkit.inference import spike_slab_model
+from gb_spike_slab import NoiseGenerator, WaveformGenerator, SignalInjector
+from gb_spike_slab.inference import spike_slab_model
 import numpyro
 from numpyro.infer import MCMC, NUTS, DiscreteHMCGibbs
 import matplotlib.pyplot as plt

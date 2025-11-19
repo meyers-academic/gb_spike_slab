@@ -1,5 +1,5 @@
 """
-Setup script for claude_gb_toolkit package
+Setup script for gb_spike_slab package
 
 Installation:
     pip install -e .
@@ -8,11 +8,11 @@ Installation:
 from setuptools import setup, find_packages
 
 setup(
-    name="claude_gb_toolkit",
-    version="1.0.0",
-    author="Your Name",
-    author_email="your.email@example.com",
-    description="Modular toolkit for LISA gravitational wave data analysis",
+    name="gb_spike_slab",
+    version="0.1",
+    author="Patrick Meyers",
+    author_email="pmeyers@ethz.ch",
+    description="A spike and slab approach to galactic binary detection",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
     packages=find_packages(),

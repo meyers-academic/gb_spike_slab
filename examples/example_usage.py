@@ -12,7 +12,7 @@ This script demonstrates:
 import numpy as np
 import jax.numpy as jnp
 import matplotlib.pyplot as plt
-from claude_gb_toolkit import NoiseGenerator, WaveformGenerator, SignalInjector, FrequencyGrid
+from gb_spike_slab import NoiseGenerator, WaveformGenerator, SignalInjector, FrequencyGrid
 
 # Configure JAX for 64-bit precision
 import jax
@@ -271,7 +271,7 @@ def main():
     print()
     print("Step 5: Computing signal-to-noise ratios...")
     
-    from claude_gb_toolkit.utils import compute_snr
+    from gb_spike_slab.utils import compute_snr
     
     for i in range(n_sources):
         # Compute SNR for each source using cropped data

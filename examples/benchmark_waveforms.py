@@ -11,8 +11,8 @@ import jax.numpy as jnp
 import jax
 import time
 import matplotlib.pyplot as plt
-from claude_gb_toolkit import NoiseGenerator, WaveformGenerator, SignalInjector
-from claude_gb_toolkit.utils import compute_likelihood
+from gb_spike_slab import NoiseGenerator, WaveformGenerator, SignalInjector
+from gb_spike_slab.utils import compute_likelihood
 
 # Configure JAX
 jax.config.update("jax_enable_x64", True)
