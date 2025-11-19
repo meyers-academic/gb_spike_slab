@@ -1,22 +1,19 @@
 """
-Test Suite for Gravitational Wave Data Analysis Package
+Test suite for core gb_spike_slab functionality.
 
-Run this to verify all components are working correctly.
+Run with: pytest tests/test_core.py
+Or simply: pytest
 """
 
-import jax
 import jax.numpy as jnp
 import numpy as np
-from claude_gb_toolkit import NoiseGenerator, WaveformGenerator, SignalInjector, FrequencyGrid
-from claude_gb_toolkit.utils import compute_snr, validate_parameters
-
-jax.config.update("jax_enable_x64", True)
+import pytest
+from gb_spike_slab import NoiseGenerator, WaveformGenerator, SignalInjector, FrequencyGrid
+from gb_spike_slab.utils import compute_snr, validate_parameters
 
 
 def test_noise_generation():
     """Test noise generation module."""
-    print("Testing NoiseGenerator...")
-    
     T_OBS = 365 * 24 * 3600
     DELTA_T = 5.0
     
@@ -34,15 +31,12 @@ def test_noise_generation():
     # Test PSDs
     psd_A, psd_E, psd_T = noise_gen.get_psds()
     assert len(psd_A) == len(noise_A)
-    assert np.all(psd_A > 0), "PSD should be positive"
-    
-    print("  ✓ NoiseGenerator passed all tests")
+    # DC component (first element) can be zero, but all other frequencies should have positive PSD
+    assert np.all(psd_A[1:] > 0), "PSD should be positive for all non-DC frequencies"
 
 
 def test_waveform_generation():
     """Test waveform generation module."""
-    print("Testing WaveformGenerator...")
-    
     T_OBS = 365 * 24 * 3600
     N_SAMPLES = 128
     
@@ -73,14 +67,10 @@ def test_waveform_generation():
     
     invalid_params = jnp.array([[0.00136, 8.9e-19, -1e-22, 0.3, -2.7, 3.5, 0.5, 3.0]])  # negative amplitude
     assert not validate_parameters(invalid_params), "Invalid parameters should fail"
-    
-    print("  ✓ WaveformGenerator passed all tests")
 
 
 def test_signal_injection():
     """Test signal injection module."""
-    print("Testing SignalInjector...")
-    
     T_OBS = 365 * 24 * 3600
     DELTA_T = 5.0
     N_SAMPLES = 128
@@ -101,24 +91,30 @@ def test_signal_injection():
     
     # Test interpolation injection
     injector = SignalInjector(noise_freqs=freqs, t_obs=T_OBS)
-    data_A, data_E, data_T = injector.inject_signals(
-        noise_A, noise_E, noise_T,
-        A_wf, E_wf, T_wf,
-        wf_freqs
-    )
     
-    assert data_A.shape == noise_A.shape
-    assert not np.allclose(data_A, noise_A), "Data should differ from noise after injection"
-    
-    # Test with return_individual
-    (data_A2, _, _), interpolated_wfs = injector.inject_signals(
+    # Test with return_individual to get both data and interpolated waveforms
+    (data_A, data_E, data_T), interpolated_wfs = injector.inject_signals(
         noise_A, noise_E, noise_T,
         A_wf, E_wf, T_wf,
         wf_freqs,
         return_individual=True
     )
     
-    assert np.allclose(data_A, data_A2), "Should get same result with return_individual"
+    assert data_A.shape == noise_A.shape
+    # Verify that interpolated waveforms are non-zero (signal was actually injected)
+    assert np.any(np.abs(interpolated_wfs['A']) > 0), "Interpolated waveforms should be non-zero"
+    # Check that data differs from noise (using a more sensitive check for very small signals)
+    diff = np.abs(data_A - noise_A)
+    assert np.any(diff > 1e-30), "Data should differ from noise after injection"
+    
+    # Test without return_individual (should give same result)
+    data_A2, data_E2, data_T2 = injector.inject_signals(
+        noise_A, noise_E, noise_T,
+        A_wf, E_wf, T_wf,
+        wf_freqs
+    )
+    
+    assert np.allclose(data_A, data_A2), "Should get same result with or without return_individual"
     assert 'A' in interpolated_wfs
     assert interpolated_wfs['A'].shape == (2, len(freqs))
     
@@ -130,14 +126,10 @@ def test_signal_injection():
     assert len(cropped_A) < len(data_A)
     assert cropped_freqs[0] >= f_min
     assert cropped_freqs[-1] <= f_max
-    
-    print("  ✓ SignalInjector passed all tests")
 
 
 def test_utilities():
     """Test utility functions."""
-    print("Testing utilities...")
-    
     T_OBS = 365 * 24 * 3600
     
     # Create fake signal and PSD
@@ -159,14 +151,10 @@ def test_utilities():
     
     idx_low, idx_high = grid.get_frequency_range(0.001, 0.002)
     assert idx_low < idx_high
-    
-    print("  ✓ Utilities passed all tests")
 
 
 def test_end_to_end():
     """Test complete end-to-end workflow."""
-    print("Testing end-to-end workflow...")
-    
     T_OBS = 365 * 24 * 3600
     DELTA_T = 5.0
     N_SAMPLES = 128
@@ -211,38 +199,4 @@ def test_end_to_end():
         snr_combined = np.sqrt(snr_A**2 + snr_E**2)
         snrs.append(snr_combined)
         assert snr_combined > 0, f"SNR for source {i} should be positive"
-    
-    print(f"  ✓ Successfully processed {n_sources} sources")
-    print(f"  ✓ SNR range: {min(snrs):.1f} to {max(snrs):.1f}")
 
-
-def main():
-    """Run all tests."""
-    print("=" * 70)
-    print("Running Test Suite for GW Data Analysis Package")
-    print("=" * 70)
-    print()
-    
-    try:
-        test_noise_generation()
-        test_waveform_generation()
-        test_signal_injection()
-        test_utilities()
-        test_end_to_end()
-        
-        print()
-        print("=" * 70)
-        print("✓ ALL TESTS PASSED!")
-        print("=" * 70)
-        
-    except Exception as e:
-        print()
-        print("=" * 70)
-        print("✗ TEST FAILED!")
-        print("=" * 70)
-        print(f"Error: {e}")
-        raise
-
-
-if __name__ == "__main__":
-    main()
