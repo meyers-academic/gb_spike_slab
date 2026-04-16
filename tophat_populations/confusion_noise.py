@@ -55,14 +55,13 @@ def get_threshold_and_conf_noise_for_powerlaw(Tobs, delta_f_band, Sw, Ntot, alph
     avgA2 = (alpha - 1) / (3 - alpha) * Amin**(alpha - 1) * (Ath**(3-alpha) - Amin**(3-alpha))
     avgA4 = (alpha - 1) / (5 - alpha) * Amin**(alpha - 1) * (Ath**(5-alpha) - Amin**(5-alpha))
     # amplitude variance
-    var_Sconf = 4 * Ntot * (avgA4 - avgA2**2) / delta_f_band**2
+    # lam = Ntot * w_fdot / delta_f_band   # actual overlap rate per bin
+    lam = mu
 
-    # phase variance
-    if phase_variance:
-        var_Sconf += avgA2**2 * 4 * Ntot / delta_f_band**2
+    var_Sconf  = 4 * Ntot * (avgA4 - avgA2**2) / (delta_f_band**2)#  * w_fdot * Tobs)
+    var_Sconf += 4 * Ntot * mu * avgA2**2 / delta_f_band**2
 
-    # number variance
-    if N_variance:
-        print('hi')
-        var_Sconf += avgA2**2 * 4 * Ntot / delta_f_band**2
+    # var_Sconf  = 4 * Ntot * (avgA4 - avgA2**2) / delta_f_band**2
+    # var_Sconf += 4 * Ntot**2 * w_fdot * avgA2**2 / delta_f_band**3
+
     return Ath, Sconf, var_Sconf

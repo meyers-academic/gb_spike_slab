@@ -1,7 +1,7 @@
 import jax
 import jax.numpy as jnp
 import numpy as np
-from waveform_simplified import tophat_fd_waveform
+from tophat_populations.waveform_simplified import tophat_fd_waveform
 
 
 def filter_coefficients(waveforms, data, psd, frequencies):
