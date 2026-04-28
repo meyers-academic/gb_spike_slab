@@ -1,0 +1,27 @@
+{
+  "n_samples": 5,
+  "max_K_resolve": 5,
+  "T_obs": 7776000.0,
+  "num_samples_long": 1555200,
+  "dt": 5.0,
+  "df": 1.286008230452675e-07,
+  "freq_range": [
+    0.001,
+    0.005
+  ],
+  "sample_center": 0.003,
+  "window_half_width": 5e-06,
+  "log_amp_range": [
+    -22,
+    -21.5
+  ],
+  "min_freq_sep": 0.0,
+  "snr_threshold": 7.0,
+  "confusion_lambda": 3.0,
+  "tdi_gen": 2.0,
+  "jaxgb_n": 256,
+  "noise_model": "SciRDv1",
+  "seed": 42,
+  "param_order": "f,fdot,A,inc,ra,dec,pol,phi",
+  "channels": "A,E,T (noise-orthogonal TDI gen 2.0)"
+}

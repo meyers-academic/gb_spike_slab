@@ -105,7 +105,7 @@ class WaveformGenerator:
         fdot = params[:, 1]
         
         # Compute minimum frequency bin index for each source
-        kmin = self.jgb.get_kmin(f0, fdot, t_ref)
+        kmin = self.jgb.get_kmin(f0) #, fdot, t_ref)
         kmin = jnp.atleast_1d(kmin)
         
         # Get frequency grid for each source
